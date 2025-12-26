@@ -1,0 +1,283 @@
+﻿<Page x:Class="darks.Windows.ShiftsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Shifts" Loaded="Page_Loaded">
+    
+    <Page.Resources>
+        <!-- Page Entrance Animation -->
+        <Storyboard x:Key="PageEntranceAnimation">
+            <DoubleAnimation Storyboard.TargetName="PageContent"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             Duration="0:0:0.4">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="Page.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource PageEntranceAnimation}"/>
+        </EventTrigger>
+    </Page.Triggers>
+
+    <Grid x:Name="PageContent" Opacity="0" Margin="16,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <TextBlock Text="Мои смены" 
+                   FontSize="28" 
+                   FontWeight="Bold" 
+                   Foreground="#1E293B"
+                   Margin="0,0,0,24"/>
+
+        <!-- Timer & Control Card -->
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="20" 
+                Padding="32,28"
+                Margin="0,0,16,24">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="4" Opacity="0.06"/>
+            </Border.Effect>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Shift Toggle Button -->
+                <Button x:Name="BtnShiftToggle" 
+                        Content="Начать смену"
+                        Click="BtnShiftToggle_Click"
+                        Cursor="Hand"
+                        VerticalAlignment="Center">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#10B981" Offset="0"/>
+                            <GradientStop Color="#059669" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="ShiftBorder"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="14"
+                                    Padding="32,16"
+                                    MinWidth="180"
+                                    RenderTransformOrigin="0.5,0.5">
+                                <Border.RenderTransform>
+                                    <ScaleTransform x:Name="ShiftScale" ScaleX="1" ScaleY="1"/>
+                                </Border.RenderTransform>
+                                <Border.Effect>
+                                    <DropShadowEffect x:Name="ShiftShadow" Color="#10B981" BlurRadius="18" ShadowDepth="5" Opacity="0.35"/>
+                                </Border.Effect>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock x:Name="ShiftIcon" Text="▶" FontSize="14" Foreground="White" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <ContentPresenter VerticalAlignment="Center">
+                                        <ContentPresenter.Resources>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontSize" Value="15"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                            </Style>
+                                        </ContentPresenter.Resources>
+                                    </ContentPresenter>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleX" 
+                                                             To="1.03" Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleY" 
+                                                             To="1.03" Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftShadow" 
+                                                             Storyboard.TargetProperty="BlurRadius" 
+                                                             To="28" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftShadow" 
+                                                             Storyboard.TargetProperty="Opacity" 
+                                                             To="0.5" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleX" 
+                                                             To="1" Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleY" 
+                                                             To="1" Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftShadow" 
+                                                             Storyboard.TargetProperty="BlurRadius" 
+                                                             To="18" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftShadow" 
+                                                             Storyboard.TargetProperty="Opacity" 
+                                                             To="0.35" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleX" 
+                                                             To="0.95" Duration="0:0:0.08"/>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleY" 
+                                                             To="0.95" Duration="0:0:0.08"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleX" 
+                                                             To="1" Duration="0:0:0.1"/>
+                                            <DoubleAnimation Storyboard.TargetName="ShiftScale" 
+                                                             Storyboard.TargetProperty="ScaleY" 
+                                                             To="1" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                
+                <!-- Timer Display -->
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="ТЕКУЩАЯ СМЕНА" 
+                               FontSize="11" 
+                               FontWeight="SemiBold"
+                               Foreground="#94A3B8"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,8"/>
+                    <TextBlock x:Name="TxtTimer" 
+                               Text="00:00:00" 
+                               FontSize="56" 
+                               FontWeight="Light"
+                               FontFamily="Segoe UI"
+                               Foreground="#1E293B"
+                               HorizontalAlignment="Center">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#4F46E5" BlurRadius="0" ShadowDepth="0" Opacity="0"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
+                
+                <!-- Status Indicator -->
+                <Border Grid.Column="2" 
+                        VerticalAlignment="Center"
+                        CornerRadius="12"
+                        Padding="20,12">
+                    <Border.Background>
+                        <SolidColorBrush Color="#F1F5F9"/>
+                    </Border.Background>
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="10" Height="10" Margin="0,0,10,0">
+                            <Ellipse.Fill>
+                                <SolidColorBrush Color="#94A3B8"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="Не активна" 
+                                   FontSize="13" 
+                                   FontWeight="SemiBold"
+                                   Foreground="#64748B"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Shifts History Card -->
+        <Border Grid.Row="2" 
+                Background="White" 
+                CornerRadius="20" 
+                Padding="8"
+                Margin="0,0,16,16">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="4" Opacity="0.06"/>
+            </Border.Effect>
+            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Text="История смен" 
+                           FontSize="16" 
+                           FontWeight="SemiBold" 
+                           Foreground="#1E293B"
+                           Margin="16,16,16,8"/>
+                
+                <DataGrid x:Name="GridShifts" 
+                          Grid.Row="1"
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True" 
+                          CanUserAddRows="False"
+                          GridLinesVisibility="None"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="НАЧАЛО" Binding="{Binding StartTime, StringFormat='dd.MM HH:mm'}" Width="150">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="#10B981"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="КОНЕЦ" Binding="{Binding EndTime, StringFormat='dd.MM HH:mm', TargetNullValue='В процессе...'}" Width="150">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="#EF4444"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="ВСЕГО ЧАСОВ" Binding="{Binding TotalHours, StringFormat='{}{0:N2} ч.'}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Foreground" Value="#4F46E5"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

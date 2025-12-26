@@ -1,0 +1,184 @@
+﻿<Window x:Class="darks.Windows.LabelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Print Label" Height="420" Width="450" 
+        WindowStartupLocation="CenterScreen" 
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+    
+    <Border CornerRadius="24" Margin="20">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#F4F7FC" Offset="0"/>
+                <GradientStop Color="#EEF2FF" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="40" ShadowDepth="15" Opacity="0.2"/>
+        </Border.Effect>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Label Preview -->
+            <Border Background="White" 
+                    Width="320" 
+                    CornerRadius="16" 
+                    Padding="28"
+                    Margin="0,30,0,0"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="5" Opacity="0.1"/>
+                </Border.Effect>
+                <StackPanel>
+                    <!-- Header -->
+                    <Grid Margin="0,0,0,16">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" CornerRadius="8" Margin="0,0,10,0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#4F46E5" Offset="0"/>
+                                        <GradientStop Color="#7C3AED" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <TextBlock Text="D" 
+                                           Foreground="White" 
+                                           FontWeight="Bold" 
+                                           FontSize="16"
+                                           HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="DARKSTORE" 
+                                       FontWeight="Bold" 
+                                       FontSize="16"
+                                       Foreground="#1E293B"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Border HorizontalAlignment="Right" 
+                                CornerRadius="6" 
+                                Padding="10,5"
+                                VerticalAlignment="Center">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#10B981" Offset="0"/>
+                                    <GradientStop Color="#059669" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="EXPRESS" 
+                                       Foreground="White" 
+                                       FontWeight="Bold" 
+                                       FontSize="10"/>
+                        </Border>
+                    </Grid>
+                    
+                    <!-- Divider -->
+                    <Border Height="2" CornerRadius="1" Margin="0,0,0,20">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#4F46E5" Offset="0"/>
+                                <GradientStop Color="#7C3AED" Offset="0.5"/>
+                                <GradientStop Color="#4F46E5" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Order ID -->
+                    <TextBlock x:Name="TxtOrderId" 
+                               Text="ORDER #1024" 
+                               FontSize="32" 
+                               FontWeight="Black" 
+                               HorizontalAlignment="Center" 
+                               Foreground="#1E293B"
+                               Margin="0,0,0,6"/>
+                    <TextBlock x:Name="TxtDate" 
+                               Text="26.12.2025" 
+                               HorizontalAlignment="Center" 
+                               Foreground="#94A3B8"
+                               FontSize="13"/>
+
+                    <!-- Barcode -->
+                    <Border Margin="0,24,0,0" 
+                            Background="#F8FAFC" 
+                            CornerRadius="10" 
+                            Padding="20,16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="50">
+                                <Rectangle Width="4" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="2" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="6" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="3" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="1" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="5" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="2" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="4" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="8" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="2" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="3" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="5" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="2" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="4" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="2" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="6" Fill="#1E293B" Margin="1,0"/>
+                                <Rectangle Width="3" Fill="#1E293B" Margin="1,0"/>
+                            </StackPanel>
+
+                            <TextBlock Text="СКАНИРОВАТЬ ПРИ ВЫДАЧЕ" 
+                                       FontSize="10" 
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"
+                                       Foreground="#64748B"
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Print Button -->
+            <Button Grid.Row="1" 
+                    Click="BtnClose_Click"
+                    Margin="0,0,0,24"
+                    Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="PrintBorder"
+                                CornerRadius="14"
+                                Padding="36,16"
+                                HorizontalAlignment="Center">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4F46E5" Offset="0"/>
+                                    <GradientStop Color="#7C3AED" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#4F46E5" BlurRadius="20" ShadowDepth="5" Opacity="0.35"/>
+                            </Border.Effect>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🖨️" FontSize="16" Margin="0,0,12,0"/>
+                                <TextBlock Text="Печать (Закрыть)" 
+                                           Foreground="White" 
+                                           FontWeight="Bold"
+                                           FontSize="14"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="PrintBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#4F46E5" BlurRadius="30" ShadowDepth="8" Opacity="0.45"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+    </Border>
+</Window>

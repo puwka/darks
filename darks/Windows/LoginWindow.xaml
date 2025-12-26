@@ -1,0 +1,422 @@
+﻿<Window x:Class="darks.Windows.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Login" Height="820" Width="1150"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None"
+        AllowsTransparency="True" Background="Transparent"
+        Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <!-- Puzzle Geometry for Captcha -->
+        <PathGeometry x:Key="PuzzleGeometry" Figures="M 10,10 L 10,25 Q 5,25 5,35 Q 15,35 15,35 L 15,50 L 30,50 Q 30,55 40,55 Q 40,45 40,45 L 55,45 L 55,30 Q 60,30 60,20 Q 50,20 55,20 L 55,10 Z"/>
+        
+        <!-- Animated Gradient for Background -->
+        <Storyboard x:Key="BackgroundPulse" RepeatBehavior="Forever">
+            <ColorAnimation Storyboard.TargetName="GradientStop1"
+                            Storyboard.TargetProperty="Color"
+                            From="#1E1B4B" To="#312E81"
+                            Duration="0:0:4" AutoReverse="True"/>
+            <ColorAnimation Storyboard.TargetName="GradientStop2"
+                            Storyboard.TargetProperty="Color"
+                            From="#312E81" To="#4F46E5"
+                            Duration="0:0:4" AutoReverse="True"/>
+        </Storyboard>
+        
+        <!-- Page Entrance Animation -->
+        <Storyboard x:Key="EntranceAnimation">
+            <DoubleAnimation Storyboard.TargetName="LoginCard"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             Duration="0:0:0.6">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="CardTranslate"
+                             Storyboard.TargetProperty="Y"
+                             From="40" To="0"
+                             Duration="0:0:0.6">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        
+        <!-- Button Pulse Animation -->
+        <Storyboard x:Key="ButtonPulse" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="LoginButtonGlow"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0.3" To="0.6"
+                             Duration="0:0:1.5" AutoReverse="True">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        
+        <!-- Refresh Button Style -->
+        <Style x:Key="RefreshButtonStyle" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" Opacity="0.9"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="#4F46E5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <RotateTransform Angle="0"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="RefreshBorder"
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="8"
+                                Width="36" Height="36">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" 
+                                                  BlurRadius="10" 
+                                                  ShadowDepth="2" 
+                                                  Opacity="0.15"/>
+                            </Border.Effect>
+                            <TextBlock Text="↻" 
+                                       FontSize="18" 
+                                       FontWeight="Bold"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Exit Button Style -->
+        <Style x:Key="ExitLinkStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" Padding="12,8">
+                            <TextBlock x:Name="ExitText"
+                                       Text="{TemplateBinding Content}" 
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       HorizontalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ExitText" Property="Foreground" Value="#EF4444"/>
+                                <Setter TargetName="ExitText" Property="TextDecorations" Value="Underline"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource BackgroundPulse}"/>
+            <BeginStoryboard Storyboard="{StaticResource EntranceAnimation}"/>
+            <BeginStoryboard Storyboard="{StaticResource ButtonPulse}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <!-- Main Container with Gradient Background -->
+    <Border CornerRadius="24">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop x:Name="GradientStop1" Color="#1E1B4B" Offset="0"/>
+                <GradientStop x:Name="GradientStop2" Color="#312E81" Offset="0.5"/>
+                <GradientStop Color="#4F46E5" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="40" ShadowDepth="15" Opacity="0.4"/>
+        </Border.Effect>
+        
+        <Grid>
+            <!-- Decorative Elements - Abstract Shapes -->
+            <Canvas IsHitTestVisible="False">
+                <!-- Large Circle Top Right -->
+                <Ellipse Width="400" Height="400" Canvas.Right="-100" Canvas.Top="-150">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#6366F1" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                    <Ellipse.OpacityMask>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#33FFFFFF" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Ellipse.OpacityMask>
+                </Ellipse>
+                
+                <!-- Circle Bottom Left -->
+                <Ellipse Width="300" Height="300" Canvas.Left="-100" Canvas.Bottom="-100" Opacity="0.3">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#818CF8" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                
+                <!-- Small Dots Pattern -->
+                <Ellipse Width="8" Height="8" Fill="#FFFFFF" Opacity="0.2" Canvas.Left="80" Canvas.Top="120"/>
+                <Ellipse Width="6" Height="6" Fill="#FFFFFF" Opacity="0.15" Canvas.Left="150" Canvas.Top="200"/>
+                <Ellipse Width="10" Height="10" Fill="#FFFFFF" Opacity="0.1" Canvas.Left="200" Canvas.Top="350"/>
+                <Ellipse Width="5" Height="5" Fill="#FFFFFF" Opacity="0.2" Canvas.Right="200" Canvas.Bottom="150"/>
+                <Ellipse Width="8" Height="8" Fill="#FFFFFF" Opacity="0.15" Canvas.Right="120" Canvas.Bottom="250"/>
+            </Canvas>
+            
+            <!-- Brand Section - Left Side -->
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Margin="80,0,0,0" Width="320">
+                <TextBlock Text="DARKSTORE" 
+                           FontSize="42" 
+                           FontWeight="Bold" 
+                           Foreground="White"
+                           Margin="0,0,0,16">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="0" Opacity="0.3"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                
+                <TextBlock Text="Система управления складом" 
+                           FontSize="16" 
+                           FontWeight="Light"
+                           Foreground="#A5B4FC"
+                           Margin="0,0,0,40"/>
+                
+                <Border Background="#FFFFFF" Opacity="0.1" CornerRadius="2" Height="2" Width="60" HorizontalAlignment="Left" Margin="0,0,0,40"/>
+                
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <TextBlock Text="✓" Foreground="#10B981" FontSize="16" Margin="0,0,12,0"/>
+                    <TextBlock Text="Умное управление заказами" Foreground="#C7D2FE" FontSize="14"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <TextBlock Text="✓" Foreground="#10B981" FontSize="16" Margin="0,0,12,0"/>
+                    <TextBlock Text="Интерактивная карта склада" Foreground="#C7D2FE" FontSize="14"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="✓" Foreground="#10B981" FontSize="16" Margin="0,0,12,0"/>
+                    <TextBlock Text="Аналитика в реальном времени" Foreground="#C7D2FE" FontSize="14"/>
+                </StackPanel>
+            </StackPanel>
+            
+            <!-- Login Card - Glass Morphism Effect -->
+            <Border x:Name="LoginCard" 
+                    Width="420" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Center"
+                    Margin="0,0,80,0"
+                    CornerRadius="24"
+                    Opacity="0">
+                <Border.RenderTransform>
+                    <TranslateTransform x:Name="CardTranslate" Y="40"/>
+                </Border.RenderTransform>
+                <Border.Background>
+                    <SolidColorBrush Color="White" Opacity="0.95"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="60" ShadowDepth="20" Opacity="0.25"/>
+                </Border.Effect>
+
+                <StackPanel Margin="48,52">
+                    <!-- Header -->
+                    <TextBlock Text="Добро пожаловать" 
+                               FontSize="28" 
+                               FontWeight="Bold" 
+                               Foreground="#1E293B" 
+                               Margin="0,0,0,6"/>
+                    <TextBlock Text="Введите данные для входа в систему" 
+                               FontSize="14" 
+                               Foreground="#64748B" 
+                               Margin="0,0,0,36"/>
+
+                    <!-- Login Field -->
+                    <TextBlock Text="Логин" 
+                               Style="{StaticResource LabelText}"
+                               Margin="0,0,0,8"/>
+                    <TextBox x:Name="TxtLogin" 
+                             Height="48"
+                             Foreground="#1E293B"
+                             Margin="0,0,0,20"/>
+
+                    <!-- Password Field -->
+                    <TextBlock Text="Пароль" 
+                               Style="{StaticResource LabelText}"
+                               Margin="0,0,0,8"/>
+                    <PasswordBox x:Name="TxtPass" 
+                                 Height="48"
+                                 Foreground="#1E293B"
+                                 Margin="0,0,0,28"/>
+
+                    <!-- Captcha Section -->
+                    <TextBlock Text="Проверка безопасности" 
+                               Style="{StaticResource LabelText}"
+                               Margin="0,0,0,12"/>
+
+                    <Border CornerRadius="16" 
+                            Background="#F8FAFC" 
+                            BorderBrush="#E2E8F0" 
+                            BorderThickness="1" 
+                            ClipToBounds="True"
+                            Padding="0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="2" Opacity="0.05"/>
+                        </Border.Effect>
+                        
+                        <Grid Width="324" Height="200">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="150"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Captcha Image Area -->
+                            <Border Grid.Row="0" CornerRadius="12,12,0,0" ClipToBounds="True" Margin="8,8,8,0">
+                                <Grid>
+                                    <Image x:Name="ImgBackground" Stretch="UniformToFill"/>
+                                    
+                                    <Canvas x:Name="CaptchaCanvas" Background="Transparent">
+                                        <!-- Puzzle Hole -->
+                                        <Path x:Name="PathHole" 
+                                              Data="{StaticResource PuzzleGeometry}" 
+                                              Fill="Black" 
+                                              Opacity="0.5">
+                                            <Path.Effect>
+                                                <DropShadowEffect Color="White" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
+                                            </Path.Effect>
+                                        </Path>
+
+                                        <!-- Puzzle Piece -->
+                                        <Canvas x:Name="CanvasPiece" Width="65" Height="65">
+                                            <Canvas.Clip>
+                                                <PathGeometry Figures="M 10,10 L 10,25 Q 5,25 5,35 Q 15,35 15,35 L 15,50 L 30,50 Q 30,55 40,55 Q 40,45 40,45 L 55,45 L 55,30 Q 60,30 60,20 Q 50,20 55,20 L 55,10 Z"/>
+                                            </Canvas.Clip>
+                                            <Image x:Name="ImgPiece" Width="308" Height="134" Stretch="UniformToFill"/>
+                                            <Canvas.Effect>
+                                                <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="3" Opacity="0.5"/>
+                                            </Canvas.Effect>
+                                        </Canvas>
+                                    </Canvas>
+                                    
+                                    <!-- Refresh Button -->
+                                    <Button Style="{StaticResource RefreshButtonStyle}" 
+                                            HorizontalAlignment="Right" 
+                                            VerticalAlignment="Top" 
+                                            Margin="0,8,8,0"
+                                            Click="BtnRefresh_Click"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Slider Area -->
+                            <Border Grid.Row="1" Background="#F1F5F9" Margin="0,4,0,0">
+                                <Grid Margin="16,0">
+                                    <TextBlock Text="← Перетащите для подтверждения →" 
+                                               Foreground="#94A3B8"
+                                               FontSize="11"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Opacity="0.7"/>
+                                    <Slider x:Name="SliderCaptcha" 
+                                            VerticalAlignment="Center" 
+                                            Minimum="0" 
+                                            Maximum="248" 
+                                            ValueChanged="SliderCaptcha_ValueChanged"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Login Button with Glow Effect -->
+                    <Grid Margin="0,32,0,0">
+                        <Border x:Name="LoginButtonGlow" 
+                                CornerRadius="12" 
+                                Height="56"
+                                Opacity="0.3">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4F46E5" Offset="0"/>
+                                    <GradientStop Color="#7C3AED" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <BlurEffect Radius="20"/>
+                            </Border.Effect>
+                        </Border>
+                        <Button Content="ВОЙТИ В СИСТЕМУ" 
+                                Style="{StaticResource ModernBtn}" 
+                                Height="56"
+                                FontSize="15"
+                                FontWeight="Bold"
+                                Click="BtnLogin_Click"/>
+                    </Grid>
+
+                    <!-- Exit Link -->
+                    <Button Content="Выйти из приложения" 
+                            Style="{StaticResource ExitLinkStyle}"
+                            HorizontalAlignment="Center"
+                            Margin="0,20,0,0"
+                            Click="BtnExit_Click"/>
+                </StackPanel>
+            </Border>
+            
+            <!-- Close Button - Top Right -->
+            <Button HorizontalAlignment="Right" 
+                    VerticalAlignment="Top" 
+                    Margin="0,20,24,0"
+                    Width="40" Height="40"
+                    Cursor="Hand"
+                    Click="BtnExit_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="CloseBorder" 
+                                Background="Transparent" 
+                                CornerRadius="20"
+                                Width="40" Height="40">
+                            <TextBlock Text="✕" 
+                                       Foreground="#A5B4FC" 
+                                       FontSize="16"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CloseBorder" Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="White" Opacity="0.1"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+    </Border>
+</Window>

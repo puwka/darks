@@ -1,0 +1,414 @@
+﻿<Page x:Class="darks.Windows.ProductsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Products" Loaded="Page_Loaded">
+
+    <Page.Resources>
+        <!-- Page Entrance Animation -->
+        <Storyboard x:Key="PageEntranceAnimation">
+            <DoubleAnimation Storyboard.TargetName="PageContent"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             Duration="0:0:0.4">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        
+        <!-- Modal Fade In Animation -->
+        <Storyboard x:Key="ModalFadeIn">
+            <DoubleAnimation Storyboard.TargetName="ModalAddProduct"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1"
+                             Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        
+        <!-- Delete Button Style -->
+        <Style x:Key="DeleteBtn" TargetType="Button">
+            <Setter Property="Background" Value="#FEE2E2"/>
+            <Setter Property="Foreground" Value="#EF4444"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="DeleteBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}">
+                            <TextBlock Text="🗑" 
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="DeleteBorder" Property="Background" Value="#EF4444"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Form Label Style -->
+        <Style x:Key="FormLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+    </Page.Resources>
+
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="Page.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource PageEntranceAnimation}"/>
+        </EventTrigger>
+    </Page.Triggers>
+
+    <Grid x:Name="PageContent" Opacity="0" Margin="16,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <Grid Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Text="Склад и Товары" 
+                       FontSize="28" 
+                       FontWeight="Bold" 
+                       Foreground="#1E293B"
+                       VerticalAlignment="Center" 
+                       Margin="0,0,24,0"/>
+            
+            <!-- Add Button -->
+            <Button Grid.Column="1" 
+                    Click="BtnAdd_Click"
+                    Cursor="Hand"
+                    VerticalAlignment="Center">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="AddBorder"
+                                CornerRadius="12"
+                                Padding="20,12">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#4F46E5" Offset="0"/>
+                                    <GradientStop Color="#7C3AED" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#4F46E5" BlurRadius="15" ShadowDepth="4" Opacity="0.3"/>
+                            </Border.Effect>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="+" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,0,8,0"/>
+                                <TextBlock Text="Новый товар" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="AddBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#4F46E5" BlurRadius="25" ShadowDepth="6" Opacity="0.4"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- Search Box -->
+            <Border Grid.Column="2" 
+                    HorizontalAlignment="Right"
+                    Background="White" 
+                    CornerRadius="14" 
+                    Width="300" 
+                    Height="48">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="15" ShadowDepth="3" Opacity="0.06"/>
+                </Border.Effect>
+                <Grid>
+                    <TextBlock Text="🔍" 
+                               FontSize="16"
+                               Foreground="#94A3B8"
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Center" 
+                               Margin="18,0,0,0"
+                               IsHitTestVisible="False"/>
+                    <TextBox x:Name="TxtSearch" 
+                             BorderThickness="0" 
+                             Background="Transparent"
+                             VerticalContentAlignment="Center" 
+                             Margin="48,0,16,0"
+                             FontSize="14"
+                             Foreground="#1E293B"
+                             TextChanged="TxtSearch_TextChanged" 
+                             Tag="Поиск..."/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Products DataGrid Card -->
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="20" 
+                Padding="8"
+                Margin="0,0,16,16">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="4" Opacity="0.06"/>
+            </Border.Effect>
+            <DataGrid x:Name="GridProducts" 
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False" 
+                      IsReadOnly="True" 
+                      GridLinesVisibility="None"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      RowHeaderWidth="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#94A3B8"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="МЕСТО" Binding="{Binding Barcode}" Width="80">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="#4F46E5"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="НАЗВАНИЕ" Binding="{Binding Name}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Foreground" Value="#1E293B"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="КАТЕГОРИЯ" Binding="{Binding Category}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#64748B"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="ОСТАТОК" Binding="{Binding Stock}" Width="90">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="ЦЕНА" Binding="{Binding Price, StringFormat='{}{0:N0} ₽'}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="#10B981"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTemplateColumn Width="70">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource DeleteBtn}" 
+                                        Click="BtnDelete_Click" 
+                                        Tag="{Binding Id}" 
+                                        ToolTip="Удалить товар"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+        <!-- MODAL: Add Product                                                                -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+        <Grid x:Name="ModalAddProduct" 
+              Grid.RowSpan="2" 
+              Visibility="Collapsed"
+              Margin="-16,0,0,0">
+            <!-- Dark Overlay -->
+            <Border Background="#1E293B" Opacity="0.6"/>
+            
+            <!-- Modal Card -->
+            <Border Background="White" 
+                    Width="480" 
+                    CornerRadius="24" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="60" ShadowDepth="20" Opacity="0.25"/>
+                </Border.Effect>
+
+                <Grid Margin="36,32">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Margin="0,0,0,28">
+                        <StackPanel>
+                            <TextBlock Text="Создание товара" 
+                                       FontSize="24" 
+                                       FontWeight="Bold" 
+                                       Foreground="#1E293B"/>
+                            <TextBlock Text="Заполните информацию о новом товаре" 
+                                       FontSize="13" 
+                                       Foreground="#94A3B8"
+                                       Margin="0,6,0,0"/>
+                        </StackPanel>
+                        <Button HorizontalAlignment="Right" 
+                                VerticalAlignment="Top"
+                                Background="Transparent" 
+                                BorderThickness="0" 
+                                Click="BtnCloseModal_Click" 
+                                Cursor="Hand"
+                                Width="40" Height="40">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="CloseBg" Background="#F1F5F9" CornerRadius="12" Width="40" Height="40">
+                                        <TextBlock Text="✕" FontSize="14" Foreground="#64748B"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="CloseBg" Property="Background" Value="#FEE2E2"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+
+                    <!-- Form Fields -->
+                    <StackPanel Grid.Row="1">
+                        <!-- Name Field -->
+                        <TextBlock Text="Название товара" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="TxtName" Height="48" Margin="0,0,0,20"/>
+
+                        <!-- Category & Price Row -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Категория" Style="{StaticResource FormLabel}"/>
+                                <ComboBox x:Name="CmbCategory" Height="48">
+                                    <ComboBoxItem Content="Grocery"/>
+                                    <ComboBoxItem Content="Drinks"/>
+                                    <ComboBoxItem Content="Snacks"/>
+                                    <ComboBoxItem Content="Household"/>
+                                    <ComboBoxItem Content="Dairy"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Цена (₽)" Style="{StaticResource FormLabel}"/>
+                                <TextBox x:Name="TxtPrice" Height="48"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Location Field -->
+                        <TextBlock Text="Место на складе" Style="{StaticResource FormLabel}"/>
+                        <ComboBox x:Name="CmbLocation" Height="48" Margin="0,0,0,24"/>
+
+                        <!-- Divider -->
+                        <Border Height="1" Background="#E2E8F0" Margin="0,0,0,24"/>
+                        
+                        <TextBlock Text="Начальные остатки" 
+                                   FontSize="16" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#1E293B"
+                                   Margin="0,0,0,16"/>
+
+                        <!-- Stock & Expiry Row -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <TextBlock Text="Количество" Style="{StaticResource FormLabel}"/>
+                                <TextBox x:Name="TxtStock" Text="0" Height="48"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Срок годности" Style="{StaticResource FormLabel}"/>
+                                <DatePicker x:Name="DpExpiry" Height="48"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Save Button -->
+                    <Button Grid.Row="2" 
+                            Height="56" 
+                            Margin="0,28,0,0"
+                            Click="BtnSave_Click"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="SaveBorder"
+                                        CornerRadius="14"
+                                        Height="{TemplateBinding Height}">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#4F46E5" Offset="0"/>
+                                            <GradientStop Color="#7C3AED" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#4F46E5" BlurRadius="20" ShadowDepth="6" Opacity="0.35"/>
+                                    </Border.Effect>
+                                    <TextBlock Text="Сохранить товар" 
+                                               Foreground="White" 
+                                               FontWeight="Bold" 
+                                               FontSize="15"
+                                               HorizontalAlignment="Center" 
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="SaveBorder" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect Color="#4F46E5" BlurRadius="30" ShadowDepth="8" Opacity="0.45"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
